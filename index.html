@@ -1,790 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rohit Khanna — ML Researcher</title>
-  <meta name="description" content="Rohit Khanna — Machine Learning researcher working where mathematics meets messy data. Diffusion models, distributional modeling, and applied statistics. MS Operations Research, UT Austin." />
-
-  <meta property="og:title" content="Rohit Khanna — ML Researcher" />
-  <meta property="og:description" content="Machine learning research at the intersection of computational statistics, diffusion models, and applied mathematics." />
-  <meta property="og:type" content="website" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-
-  <style>
-    /* ───────── Tokens ───────── */
-    :root {
-      --bg:       #0a0a0b;
-      --bg-2:     #0f0f11;
-      --surface:  #141417;
-      --surface-2:#1a1a1f;
-      --border:   #26262c;
-      --border-2: #34343c;
-      --text:     #f3f2ee;
-      --muted:    #a3a39c;
-      --faint:    #6b6b64;
-      --accent:   #f5b13d;
-      --accent-2: #ffce7a;
-      --accent-dim:#3a2f17;
-      --maxw:     1180px;
-      --mono:     'Space Mono', ui-monospace, monospace;
-      --serif:    'Fraunces', Georgia, serif;
-      --sans:     'Inter', system-ui, sans-serif;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 17px;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
-    ::selection { background: var(--accent); color: #0a0a0b; }
-
-    /* ambient glow */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -30vh; left: 50%;
-      transform: translateX(-50%);
-      width: 90vw; height: 70vh;
-      background: radial-gradient(ellipse at center, rgba(245,177,61,.10), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(1.25rem, 5vw, 3.5rem); position: relative; z-index: 1; }
-
-    .mono {
-      font-family: var(--mono);
-      font-size: .72rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
-    /* ───────── Nav ───────── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.1rem clamp(1.25rem, 5vw, 3.5rem);
-      background: rgba(10,10,11,.6);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid transparent;
-      transition: border-color .3s, background .3s;
-    }
-    nav.scrolled { border-bottom-color: var(--border); background: rgba(10,10,11,.85); }
-    .nav-mark {
-      font-family: var(--serif);
-      font-weight: 600;
-      font-size: 1.15rem;
-      letter-spacing: -.01em;
-      display: flex; align-items: center; gap: .55rem;
-    }
-    .nav-mark .blip { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .nav-links a {
-      font-family: var(--mono);
-      font-size: .73rem;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      transition: color .2s;
-      position: relative;
-    }
-    .nav-links a::after {
-      content: ''; position: absolute; left: 0; bottom: -5px;
-      width: 0; height: 1px; background: var(--accent); transition: width .25s;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-num { color: var(--faint); margin-right: .35rem; }
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
-    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: .25s; }
-
-    /* ───────── Hero ───────── */
-    header {
-      min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: center;
-      padding: 8rem 0 4rem;
-      position: relative;
-    }
-    .hero-status {
-      display: inline-flex; align-items: center; gap: .6rem;
-      font-family: var(--mono); font-size: .72rem; letter-spacing: .08em;
-      color: var(--muted); margin-bottom: 2.5rem;
-      text-transform: uppercase;
-    }
-    .pulse {
-      width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
-      box-shadow: 0 0 0 0 rgba(74,222,128,.6);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(74,222,128,.5); }
-      70% { box-shadow: 0 0 0 8px rgba(74,222,128,0); }
-      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
-    }
-    h1.hero-name {
-      font-family: var(--serif);
-      font-weight: 400;
-      font-size: clamp(3.5rem, 14vw, 11rem);
-      line-height: .92;
-      letter-spacing: -.03em;
-      margin-bottom: 1.8rem;
-    }
-    h1.hero-name .ln2 { color: var(--faint); }
-    h1.hero-name .ln2 em { font-style: italic; color: var(--accent); }
-    .hero-tag {
-      font-size: clamp(1.05rem, 2.2vw, 1.45rem);
-      color: var(--muted);
-      max-width: 30ch;
-      line-height: 1.45;
-      margin-bottom: 3rem;
-      font-weight: 300;
-    }
-    .hero-tag strong { color: var(--text); font-weight: 500; }
-    .hero-row {
-      display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: center;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: .6rem;
-      font-family: var(--mono); font-size: .8rem; letter-spacing: .04em;
-      padding: .95rem 1.6rem; border-radius: 100px;
-      background: var(--accent); color: #0a0a0b; font-weight: 700;
-      transition: transform .2s, box-shadow .2s; text-transform: uppercase;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(245,177,61,.25); }
-    .btn svg { width: 15px; height: 15px; fill: currentColor; }
-    .hero-socials { display: flex; gap: 1.5rem; }
-    .hero-socials a {
-      font-family: var(--mono); font-size: .76rem; color: var(--muted);
-      display: inline-flex; align-items: center; gap: .4rem; transition: color .2s;
-    }
-    .hero-socials a:hover { color: var(--accent); }
-    .hero-socials svg { width: 16px; height: 16px; fill: currentColor; }
-    .scroll-cue {
-      position: absolute; bottom: 2.5rem; left: clamp(1.25rem, 5vw, 3.5rem);
-      font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
-      color: var(--faint); text-transform: uppercase;
-      display: flex; align-items: center; gap: .7rem;
-    }
-    .scroll-cue .line { width: 40px; height: 1px; background: var(--border-2); position: relative; overflow: hidden; }
-    .scroll-cue .line::after { content:''; position:absolute; left:-40px; top:0; width:40px; height:1px; background: var(--accent); animation: slide 2.2s infinite; }
-    @keyframes slide { 0%{left:-40px} 100%{left:40px} }
-
-    /* ───────── Section scaffold ───────── */
-    section { padding: 7rem 0; position: relative; }
-    .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 3.5rem; }
-    .sec-num {
-      font-family: var(--mono); font-size: .78rem; color: var(--accent);
-      letter-spacing: .05em;
-    }
-    .sec-title {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(1.9rem, 5vw, 3rem); line-height: 1.05;
-      letter-spacing: -.02em;
-    }
-    .sec-title em { font-style: italic; color: var(--accent); }
-    .rule { height: 1px; background: var(--border); flex: 1; align-self: center; opacity: .6; }
-
-    /* ───────── About ───────── */
-    .about-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: start; }
-    .about-lead {
-      font-family: var(--serif); font-weight: 300;
-      font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.4;
-      letter-spacing: -.01em; margin-bottom: 1.8rem;
-    }
-    .about-lead em { font-style: italic; color: var(--accent); }
-    .about-body p { color: var(--muted); font-weight: 300; margin-bottom: 1.1rem; }
-    .about-body p:last-child { margin-bottom: 0; }
-    .about-body strong { color: var(--text); font-weight: 500; }
-    .about-side {
-      border-left: 1px solid var(--border); padding-left: 2rem;
-    }
-    .about-side h4 { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 1.2rem; }
-    .about-side ul { display: flex; flex-direction: column; gap: 1rem; }
-    .about-side li { font-size: .92rem; color: var(--muted); padding-left: 1.1rem; position: relative; }
-    .about-side li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
-    .about-side li strong { color: var(--text); font-weight: 500; display: block; }
-
-    /* ───────── Project clusters ───────── */
-    .cluster { border-top: 1px solid var(--border); padding: 2.8rem 0; }
-    .cluster:last-of-type { border-bottom: 1px solid var(--border); }
-    .cluster-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 3rem; }
-    .cluster-head .cluster-kicker { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: .9rem; display:block; }
-    .cluster-head h3 {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(1.5rem, 3.2vw, 2.1rem); line-height: 1.1;
-      letter-spacing: -.02em; margin-bottom: 1rem;
-    }
-    .cluster-head p { color: var(--muted); font-size: .95rem; font-weight: 300; max-width: 38ch; }
-    .repo-list { display: flex; flex-direction: column; }
-    .repo {
-      display: flex; align-items: flex-start; gap: 1rem;
-      padding: 1.15rem 0; border-bottom: 1px solid var(--border);
-      transition: padding-left .25s; position: relative;
-    }
-    .repo:last-child { border-bottom: none; }
-    .repo::before {
-      content: ''; position: absolute; left: -1rem; top: 50%; transform: translateY(-50%);
-      width: 0; height: 60%; background: var(--accent); transition: width .25s; border-radius: 2px;
-    }
-    .repo:hover { padding-left: 1rem; }
-    .repo:hover::before { width: 3px; }
-    .repo-main { flex: 1; min-width: 0; }
-    .repo-name {
-      font-family: var(--mono); font-size: .92rem; font-weight: 700;
-      color: var(--text); display: inline-flex; align-items: center; gap: .5rem;
-      transition: color .2s;
-    }
-    .repo:hover .repo-name { color: var(--accent); }
-    .repo-fork { font-family: var(--mono); font-size: .6rem; font-weight: 400; padding: .12rem .4rem; border: 1px solid var(--border-2); border-radius: 4px; color: var(--faint); text-transform: uppercase; }
-    .repo-desc { font-size: .86rem; color: var(--muted); font-weight: 300; margin-top: .35rem; }
-    .repo-arrow { color: var(--faint); transition: transform .25s, color .2s; font-size: 1.1rem; line-height: 1; padding-top: .15rem; }
-    .repo:hover .repo-arrow { color: var(--accent); transform: translate(3px,-3px); }
-
-    .projects-foot { margin-top: 3rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
-
-    /* ───────── Research threads ───────── */
-    .threads { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-    .thread { background: var(--bg); padding: 2.2rem; transition: background .3s; position: relative; }
-    .thread:hover { background: var(--surface); }
-    .thread .t-idx { font-family: var(--mono); font-size: .7rem; color: var(--accent); letter-spacing: .08em; }
-    .thread h3 { font-family: var(--serif); font-weight: 400; font-size: 1.4rem; line-height: 1.2; margin: 1rem 0 .7rem; letter-spacing: -.01em; }
-    .thread p { color: var(--muted); font-size: .9rem; font-weight: 300; }
-    .thread p strong { color: var(--text); font-weight: 500; }
-
-    /* ───────── Experience ───────── */
-    .xp { border-top: 1px solid var(--border); }
-    .xp-row {
-      display: grid; grid-template-columns: 140px 1fr auto; gap: 1.5rem;
-      align-items: baseline; padding: 1.8rem 0; border-bottom: 1px solid var(--border);
-      transition: padding-left .25s; position: relative;
-    }
-    .xp-row::before { content:''; position:absolute; left:-1rem; top:0; bottom:0; width:0; background: var(--accent-dim); transition: width .3s; z-index: -1; }
-    .xp-row:hover { padding-left: 1rem; }
-    .xp-year { font-family: var(--mono); font-size: .76rem; color: var(--faint); }
-    .xp-mid .xp-co { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; letter-spacing: -.01em; }
-    .xp-mid .xp-role { font-size: .92rem; color: var(--accent); font-family: var(--mono); margin-top: .3rem; }
-    .xp-mid .xp-note { font-size: .9rem; color: var(--muted); font-weight: 300; margin-top: .7rem; max-width: 60ch; }
-    .xp-tag { font-family: var(--mono); font-size: .65rem; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); border: 1px solid var(--border-2); padding: .25rem .6rem; border-radius: 100px; white-space: nowrap; }
-
-    /* ───────── Education ───────── */
-    .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .edu { border: 1px solid var(--border); border-radius: 14px; padding: 2rem; transition: border-color .3s, transform .3s; }
-    .edu:hover { border-color: var(--border-2); transform: translateY(-3px); }
-    .edu .edu-year { font-family: var(--mono); font-size: .72rem; color: var(--accent); letter-spacing: .06em; }
-    .edu h3 { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; margin: .9rem 0 .3rem; letter-spacing: -.01em; }
-    .edu .edu-deg { font-size: .95rem; color: var(--text); margin-bottom: 1rem; }
-    .edu p { font-size: .88rem; color: var(--muted); font-weight: 300; }
-    .edu p strong { color: var(--text); font-weight: 500; }
-
-    /* ───────── Skills ───────── */
-    .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem 4rem; }
-    .skills-group h4 { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 1.2rem; display:flex; align-items:center; gap:.6rem; }
-    .skills-group h4::before { content:''; width: 18px; height: 1px; background: var(--accent); }
-    .chips { display: flex; flex-wrap: wrap; gap: .55rem; }
-    .chip {
-      font-family: var(--mono); font-size: .78rem; color: var(--muted);
-      padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 8px;
-      transition: all .2s; background: var(--bg-2);
-    }
-    .chip:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-
-    /* ───────── Writing ───────── */
-    .writing-box {
-      border: 1px solid var(--border); border-radius: 16px; padding: 3.5rem;
-      display: flex; align-items: center; justify-content: space-between; gap: 2rem;
-      background: linear-gradient(120deg, var(--surface), var(--bg));
-      flex-wrap: wrap;
-    }
-    .writing-box h3 { font-family: var(--serif); font-size: 1.8rem; font-weight: 400; margin-bottom: .6rem; }
-    .writing-box p { color: var(--muted); font-weight: 300; max-width: 44ch; }
-    .writing-box .wb-soon { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent-dim); padding: .5rem 1rem; border-radius: 100px; white-space: nowrap; }
-
-    /* ───────── Contact ───────── */
-    #contact { text-align: center; padding: 9rem 0; }
-    #contact .c-kicker { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
-    #contact h2 {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(2.5rem, 8vw, 5.5rem); line-height: 1; letter-spacing: -.03em; margin-bottom: 1.5rem;
-    }
-    #contact h2 em { font-style: italic; color: var(--accent); }
-    .c-mail {
-      display: inline-block; font-family: var(--serif); font-size: clamp(1.2rem, 3vw, 1.8rem);
-      color: var(--muted); border-bottom: 1px solid var(--border-2); padding-bottom: .3rem;
-      transition: color .2s, border-color .2s; margin-bottom: 3rem;
-    }
-    .c-mail:hover { color: var(--accent); border-color: var(--accent); }
-    .c-socials { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-    .c-soc {
-      display: inline-flex; align-items: center; gap: .5rem;
-      font-family: var(--mono); font-size: .78rem; color: var(--muted);
-      padding: .7rem 1.3rem; border: 1px solid var(--border); border-radius: 100px; transition: all .2s;
-    }
-    .c-soc:hover { border-color: var(--accent); color: var(--accent); }
-    .c-soc svg { width: 16px; height: 16px; fill: currentColor; }
-
-    /* ───────── Footer ───────── */
-    footer {
-      border-top: 1px solid var(--border); padding: 2.5rem clamp(1.25rem,5vw,3.5rem);
-      display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
-      font-family: var(--mono); font-size: .72rem; color: var(--faint); letter-spacing: .04em;
-    }
-    footer a { color: var(--muted); }
-    footer a:hover { color: var(--accent); }
-
-    /* ───────── Reveal anim ───────── */
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
-    .reveal.in { opacity: 1; transform: none; }
-
-    /* ───────── Responsive ───────── */
-    @media (max-width: 860px) {
-      .about-grid, .cluster-grid, .threads, .edu-grid, .skills-grid { grid-template-columns: 1fr; }
-      .about-side { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 2rem; }
-      .cluster-grid { gap: 1.5rem; }
-      .xp-row { grid-template-columns: 1fr; gap: .5rem; }
-      .xp-tag { justify-self: start; }
-    }
-    @media (max-width: 640px) {
-      .nav-links { display: none; }
-      .nav-links.open {
-        display: flex; flex-direction: column; gap: 1.4rem;
-        position: absolute; top: 100%; left: 0; right: 0;
-        background: var(--bg-2); padding: 1.8rem; border-bottom: 1px solid var(--border);
-      }
-      .hamburger { display: flex; }
-      .hero-row { gap: 1.5rem; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .reveal { opacity: 1; transform: none; transition: none; }
-      .pulse, .scroll-cue .line::after { animation: none; }
-      html { scroll-behavior: auto; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rohit Khanna</title>
+<meta name="description" content="Rohit Khanna — Ph.D. student in Operations Research and Industrial Engineering at The University of Texas at Austin.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="wide">
 
-<!-- ───── Nav ───── -->
-<nav id="nav">
-  <a href="#top" class="nav-mark"><span class="blip"></span>Rohit Khanna</a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#about"><span class="nav-num">01</span>About</a></li>
-    <li><a href="#work"><span class="nav-num">02</span>Work</a></li>
-    <li><a href="#research"><span class="nav-num">03</span>Research</a></li>
-    <li><a href="#experience"><span class="nav-num">04</span>Experience</a></li>
-    <li><a href="#writing"><span class="nav-num">05</span>Writing</a></li>
-    <li><a href="#contact"><span class="nav-num">06</span>Contact</a></li>
-  </ul>
-  <div class="hamburger" id="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></div>
+<nav>
+  <div class="inner">
+    <a class="brand" href="index.html">Rohit Khanna</a>
+    <a class="link active" href="index.html">Home</a>
+    <a class="link" href="papers.html">Papers</a>
+    <a class="link" href="background.html">Background</a>
+    <a class="link" href="Rohit_Khanna_CV.pdf">CV</a>
+  </div>
 </nav>
 
-<!-- ───── Hero ───── -->
-<header id="top">
-  <div class="wrap">
-    <div class="hero-status"><span class="pulse"></span> Available for research & ML roles · 2026</div>
-    <h1 class="hero-name">
-      Rohit<br/>
-      <span class="ln2">Khanna<em>.</em></span>
-    </h1>
-    <p class="hero-tag">
-      Machine learning researcher working where <strong>mathematics meets messy data</strong> — diffusion models, distributional modeling, and applied statistics.
-    </p>
-    <div class="hero-row">
-      <a href="#work" class="btn">
-        Selected Work
-        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <div class="hero-socials">
-        <a href="https://github.com/rohit5khanna" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-          GitHub
-        </a>
-        <a href="mailto:121rohit5khanna@gmail.com">
-          <svg viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-          Email
-        </a>
-      </div>
-    </div>
-  </div>
-  <div class="scroll-cue"><span class="line"></span> Scroll</div>
-</header>
+<main>
 
-<!-- ───── About ───── -->
-<section id="about">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-num">01</span>
-      <h2 class="sec-title">About</h2>
-      <span class="rule"></span>
+  <section class="intro">
+    <!-- To add a photo: replace "RK" below with <img src="photo.jpg" alt="Rohit Khanna"> -->
+    <div class="photo" aria-hidden="true">RK</div>
+    <div>
+      <h1>Rohit Khanna</h1>
+      <p class="role">Ph.D. Student, Operations Research and Industrial Engineering<br>
+        The University of Texas at Austin · Advisor: <a href="https://sites.utexas.edu/bickel/">Dr. J. Eric Bickel</a></p>
+      <p class="interests"><span>Interests:</span> decision analysis, applied probability, uncertainty quantification,
+        generative models for healthcare, AI-agent evaluation</p>
+      <p class="textlinks">
+        <a href="mailto:rk29893@my.utexas.edu">Email</a>
+        <a href="Rohit_Khanna_CV.pdf">CV</a>
+        <a href="https://scholar.google.com/citations?user=XLRZ63kAAAAJ&amp;hl=en">Google Scholar</a>
+        <a href="https://github.com/rohit5khanna">GitHub</a>
+        <a href="https://www.linkedin.com/in/rohit-khanna-17980a112/">LinkedIn</a>
+      </p>
     </div>
-    <div class="about-grid">
-      <div class="reveal">
-        <p class="about-lead">
-          I'm a researcher who likes problems where <em>rigorous math collides with noisy, real-world data</em> — and the modeling has to hold up anyway.
-        </p>
-        <div class="about-body">
-          <p>
-            Currently an <strong>MS candidate in Operations Research & Industrial Engineering at UT Austin</strong>, finishing a thesis on the mathematical limits of quantile-parameterized distributions and a new method, QFlex, for modeling complex multimodal data.
-          </p>
-          <p>
-            Before grad school I spent four years as a <strong>Senior Geophysicist at ONGC</strong>, solving large-scale non-linear inverse problems and reconstructing 3D subsurface models from multi-terabyte seismic data. That grounding in physical modeling and inversion is the lens I bring to machine learning today — whether it's diffusion models for tumor growth or robustness testing for vision transformers.
-          </p>
-          <p>
-            I care about <strong>fundamental research, open science, and modeling that's honest about uncertainty.</strong>
-          </p>
-        </div>
-      </div>
-      <div class="about-side reveal">
-        <h4>At a glance</h4>
-        <ul>
-          <li><strong>UT Austin</strong> MS Operations Research · May 2026</li>
-          <li><strong>IIT (ISM) Dhanbad</strong> Integrated M.Tech, Applied Geophysics</li>
-          <li><strong>4 yrs industry</strong> Senior Geophysicist, ONGC</li>
-          <li><strong>Focus</strong> Diffusion models · distributional modeling · causal inference</li>
-          <li><strong>Based in</strong> Austin, TX</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- ───── Work (grouped clusters) ───── -->
-<section id="work">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-num">02</span>
-      <h2 class="sec-title">Selected <em>work</em></h2>
-      <span class="rule"></span>
+  <section id="current">
+    <h2>Current Work</h2>
+    <div class="columns">
+
+    <div class="item">
+      <div class="item-head">
+        <span class="item-title">Quantile-Parameterized Distributions</span>
+        <span class="item-date">2024 – present</span>
+      </div>
+      <div class="item-meta">with <a href="https://sites.utexas.edu/bickel/">Dr. J. Eric Bickel</a></div>
+      <p>Validity, shape behavior, and structural overfitting in quantile-parameterized distributions (Metalog, QFlex) used
+        to encode expert judgment. Developing diagnostics for spurious modes and the open-source qflex library.</p>
+      <p class="item-status">Manuscript under review at <em>Decision Analysis</em>.</p>
+      <p class="item-links">
+        <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7578879">Preprint</a>
+        <a href="https://qpd-bump-hunting.netlify.app/">Digital companion</a>
+        <a href="https://rohit5khanna.github.io/QFlex-tutorial/">QFlex tutorial</a>
+        <a href="https://github.com/rohit5khanna/qflex">Code</a>
+      </p>
     </div>
 
-    <!-- Cluster 1: Tumor / Diffusion -->
-    <div class="cluster reveal">
-      <div class="cluster-grid">
-        <div class="cluster-head">
-          <span class="cluster-kicker">Flagship · Generative Medical Imaging</span>
-          <h3>Tumor Growth Modeling with Diffusion</h3>
-          <p>A research line extending treatment-aware diffusion models with physics-informed priors to forecast glioma growth from longitudinal MRI — spanning the model, the data, and the biophysics.</p>
-        </div>
-        <div class="repo-list">
-          <a href="https://github.com/rohit5khanna/TaDiff-Net_SAILOR" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">TaDiff-Net_SAILOR <span class="repo-fork">fork</span></span>
-              <div class="repo-desc">Treatment-aware diffusion probabilistic model for longitudinal MRI generation & diffuse glioma growth prediction, with a rebuilt pre-processing pipeline for the SAILOR dataset.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-          <a href="https://github.com/rohit5khanna/GMD_TumorForecast" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">GMD_TumorForecast</span>
-              <div class="repo-desc">A generative drifting model for tumor forecasting and generation, blending physics-based dynamics with diffusion.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-          <a href="https://github.com/rohit5khanna/SyntheticTumorBenchmark" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">SyntheticTumorBenchmark</span>
-              <div class="repo-desc">A synthetic tumor dataset and benchmark suite for evaluating generative models on longitudinal imaging.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-          <a href="https://github.com/rohit5khanna/tumor-biophysical-parameter-inference" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">tumor-biophysical-parameter-inference</span>
-              <div class="repo-desc">Estimating biophysical growth parameters from the SAILOR dataset using physics-based models and Bayesian inference.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-        </div>
+    <div class="item">
+      <div class="item-head">
+        <span class="item-title">Agentic AI for Healthcare</span>
+        <span class="item-date">Jul 2026 – present</span>
       </div>
+      <div class="item-meta">with <a href="https://experts.utexas.edu/samuel_watkins">Dr. S. Craig Watkins</a> · IC² Institute, UT Austin</div>
+      <p>Agentic workflows for clinical tasks (medical-data retrieval, tool use, multi-step execution) and evaluation
+        frameworks for guideline adherence and reliability.</p>
+      <p class="item-status">White paper under internal review.</p>
+      <p class="item-links">
+        <a href="https://ic2.utexas.edu/research/">IC² Institute</a>
+      </p>
     </div>
 
-    <!-- Cluster 2: Distributional modeling -->
-    <div class="cluster reveal">
-      <div class="cluster-grid">
-        <div class="cluster-head">
-          <span class="cluster-kicker">MS Thesis · Computational Statistics</span>
-          <h3>Distributional Modeling &amp; QFlex</h3>
-          <p>The core of my thesis: probing where quantile-parameterized distributions break down on multimodal, noisy data — and a more flexible alternative for honest risk modeling.</p>
-        </div>
-        <div class="repo-list">
-          <a href="https://github.com/rohit5khanna/qflex" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">qflex</span>
-              <div class="repo-desc">A Python library to fit the QFlex distribution to data and generate flexible probability distributions for complex, multimodal regimes.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-        </div>
+    <div class="item">
+      <div class="item-head">
+        <span class="item-title">Longitudinal Tumor Growth Modeling</span>
+        <span class="item-date">2026 – present</span>
       </div>
+      <div class="item-meta">with <a href="https://hairongw.github.io/">Dr. Hairong Wang</a></div>
+      <p>Forecasting tumor progression from serial medical images by combining diffusion, flow-based, and generative drift
+        models with physics-informed growth priors, and transition-aware evaluation of short-horizon forecasts.</p>
+      <p class="item-status">Presented at the 21st INFORMS Workshop on Data Mining and Decision Analytics, 2026.</p>
+      <p class="item-links">
+        <a href="papers.html#tumor">Working paper</a>
+      </p>
     </div>
+    </div>
+  </section>
 
-    <!-- Cluster 3: LLMs & systems -->
-    <div class="cluster reveal">
-      <div class="cluster-grid">
-        <div class="cluster-head">
-          <span class="cluster-kicker">Applied AI · LLMs &amp; Systems</span>
-          <h3>LLMs &amp; Intelligent Systems</h3>
-          <p>Work spanning LLM-driven systems, probabilistic intent modeling, memory, and the kind of resource-constrained experiments that keep modeling honest.</p>
-        </div>
-        <div class="repo-list">
-          <a href="https://github.com/rohit5khanna/llm-intent-cache" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">llm-intent-cache</span>
-              <div class="repo-desc">Probabilistic user-type & intent detection pipeline using LLMs to pre-warm enterprise caches. Built for the Sabre consulting engagement at UT Austin.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-          <a href="https://github.com/rohit5khanna/Memosynth--lite" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">Memosynth-lite</span>
-              <div class="repo-desc">Lightweight memory-synthesis experiments with LLMs — efficient knowledge retention & retrieval in constrained settings.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-          <a href="https://github.com/rohit5khanna/parameter-golf-testing" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">parameter-golf-testing <span class="repo-fork">fork</span></span>
-              <div class="repo-desc">Training the smallest capable language model that fits in 16&nbsp;MB — a study in extreme efficiency.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-          <a href="https://github.com/rohit5khanna/TensorTonic-Solutions" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">TensorTonic-Solutions</span>
-              <div class="repo-desc">My worked solutions to TensorTonic machine-learning problems.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cluster 4: Energy markets -->
-    <div class="cluster reveal">
-      <div class="cluster-grid">
-        <div class="cluster-head">
-          <span class="cluster-kicker">Quantitative · Energy Markets</span>
-          <h3>Energy Market Volatility</h3>
-          <p>Bringing probabilistic forecasting to the Texas electricity market — modeling price dynamics and uncertainty where the data is anything but tame.</p>
-        </div>
-        <div class="repo-list">
-          <a href="https://github.com/rohit5khanna/ERCOT_Volatility_Dashboard" target="_blank" rel="noopener" class="repo">
-            <div class="repo-main">
-              <span class="repo-name">ERCOT_Volatility_Dashboard</span>
-              <div class="repo-desc">An interactive dashboard modeling and visualizing electricity-price volatility in the ERCOT market using probabilistic methods.</div>
-            </div>
-            <span class="repo-arrow">↗</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="projects-foot reveal">
-      <a href="https://github.com/rohit5khanna" target="_blank" rel="noopener" class="btn">
-        All repositories
-        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <span class="mono">github.com/rohit5khanna</span>
-    </div>
-  </div>
-</section>
-
-<!-- ───── Research ───── -->
-<section id="research">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-num">03</span>
-      <h2 class="sec-title">Research <em>threads</em></h2>
-      <span class="rule"></span>
-    </div>
-    <div class="threads reveal">
-      <div class="thread">
-        <span class="t-idx">/ 01</span>
-        <h3>Quantile-Parameterized Distributions</h3>
-        <p>Investigating the mathematical limitations of <strong>QPDs</strong> for complex, multimodal empirical distributions — and validating the <strong>QFlex</strong> method for risk modeling under noisy regimes.</p>
-      </div>
-      <div class="thread">
-        <span class="t-idx">/ 02</span>
-        <h3>Longitudinal Tumor Growth</h3>
-        <p>Extending the <strong>TaDiff</strong> diffusion framework with physics-informed ODE priors, testing flow-based and generative drift models for glioma growth prediction.</p>
-      </div>
-      <div class="thread">
-        <span class="t-idx">/ 03</span>
-        <h3>Vision Transformer Robustness</h3>
-        <p>Stress-testing <strong>ChangeFormer</strong> and deep architectures on high-resolution satellite imagery — evaluating change detection under perturbations and domain shift.</p>
-      </div>
-      <div class="thread">
-        <span class="t-idx">/ 04</span>
-        <h3>Uncertainty in Energy Markets</h3>
-        <p>Probabilistic modeling of <strong>ERCOT</strong> electricity-price volatility, capturing tail risk and regime dynamics in a notoriously noisy market.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ───── Experience ───── -->
-<section id="experience">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-num">04</span>
-      <h2 class="sec-title">Experience</h2>
-      <span class="rule"></span>
-    </div>
-    <div class="xp reveal">
-      <div class="xp-row">
-        <div class="xp-year">2025</div>
-        <div class="xp-mid">
-          <div class="xp-co">AllyIn.Ai</div>
-          <div class="xp-role">Model Research Scientist Intern</div>
-          <div class="xp-note">Designed LLM-inference benchmarking frameworks on H100/A100 GPUs to optimize energy-per-token; architected a production Graph-RAG system with a fault-tolerant hybrid retrieval pipeline.</div>
-        </div>
-        <div class="xp-tag">Internship</div>
-      </div>
-      <div class="xp-row">
-        <div class="xp-year">2024</div>
-        <div class="xp-mid">
-          <div class="xp-co">Sabre</div>
-          <div class="xp-role">Consulting Project · UT Austin</div>
-          <div class="xp-note">Engineered a self-adjusting enterprise cache simulator with an LLM-driven intent predictor and ML demand forecasting for dynamic TTL — outperforming standard LRU.</div>
-        </div>
-        <div class="xp-tag">Consulting</div>
-      </div>
-      <div class="xp-row">
-        <div class="xp-year">2020 — 2024</div>
-        <div class="xp-mid">
-          <div class="xp-co">Oil &amp; Natural Gas Corporation</div>
-          <div class="xp-role">Senior Geophysicist · Applied Math &amp; Data</div>
-          <div class="xp-note">Solved non-linear inverse problems to reconstruct subsurface properties; built 3D models from multi-terabyte seismic data using Fourier methods, spectral decomposition, and Python/SQL automation.</div>
-        </div>
-        <div class="xp-tag">Full-time</div>
-      </div>
-    </div>
-
-    <!-- Education -->
-    <div style="margin-top:4.5rem;" class="reveal">
-      <h4 class="mono" style="margin-bottom:1.5rem;color:var(--faint);">Education</h4>
-      <div class="edu-grid">
-        <div class="edu">
-          <span class="edu-year">2024 — 2026</span>
-          <h3>UT Austin</h3>
-          <div class="edu-deg">MS, Operations Research &amp; Industrial Engineering</div>
-          <p><strong>Thesis:</strong> Limits of QPDs for multimodal distributions; validating QFlex for risk modeling. <strong>Coursework:</strong> Stochastic Processes, Deep Learning, Simulation, Decision Analysis, MDPs.</p>
-        </div>
-        <div class="edu">
-          <span class="edu-year">2015 — 2020</span>
-          <h3>IIT (ISM) Dhanbad</h3>
-          <div class="edu-deg">Integrated M.Tech, Applied Geophysics</div>
-          <p>Signal processing, inversion theory, numerical modeling & time series. Capstone: well-log data imputation with XGBoost and RNNs.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Skills -->
-    <div style="margin-top:4.5rem;" class="reveal">
-      <h4 class="mono" style="margin-bottom:2rem;color:var(--faint);">Toolkit</h4>
-      <div class="skills-grid">
-        <div class="skills-group">
-          <h4>Machine Learning</h4>
-          <div class="chips">
-            <span class="chip">PyTorch</span><span class="chip">Diffusion Models</span><span class="chip">Transformers / LLMs</span><span class="chip">Graph-RAG</span><span class="chip">XGBoost</span><span class="chip">LightGBM</span><span class="chip">scikit-learn</span>
-          </div>
-        </div>
-        <div class="skills-group">
-          <h4>Statistics &amp; Math</h4>
-          <div class="chips">
-            <span class="chip">Probabilistic Modeling</span><span class="chip">Bayesian Methods</span><span class="chip">Stochastic Processes</span><span class="chip">Causal Inference</span><span class="chip">Inverse Problems</span><span class="chip">Time Series</span>
-          </div>
-        </div>
-        <div class="skills-group">
-          <h4>Computing</h4>
-          <div class="chips">
-            <span class="chip">Python</span><span class="chip">SQL</span><span class="chip">C++</span><span class="chip">Docker</span><span class="chip">AWS</span><span class="chip">HPC / Cluster</span><span class="chip">Git</span>
-          </div>
-        </div>
-        <div class="skills-group">
-          <h4>Libraries &amp; Tools</h4>
-          <div class="chips">
-            <span class="chip">NumPy</span><span class="chip">Pandas</span><span class="chip">SciPy</span><span class="chip">Plotly</span><span class="chip">Jupyter</span><span class="chip">LaTeX</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ───── Writing ───── -->
-<section id="writing">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="sec-num">05</span>
-      <h2 class="sec-title">Writing</h2>
-      <span class="rule"></span>
-    </div>
-    <div class="writing-box reveal">
-      <div>
-        <h3>Essays &amp; notes — in progress</h3>
-        <p>I'm writing about distributional modeling, diffusion, and the messy reality of doing research. The first pieces land here soon.</p>
-      </div>
-      <span class="wb-soon">Coming soon</span>
-    </div>
-  </div>
-</section>
-
-<!-- ───── Contact ───── -->
-<section id="contact">
-  <div class="wrap">
-    <p class="c-kicker reveal">06 — Contact</p>
-    <h2 class="reveal">Let's build<br/>something <em>real</em>.</h2>
-    <a href="mailto:121rohit5khanna@gmail.com" class="c-mail reveal">121rohit5khanna@gmail.com</a>
-    <div class="c-socials reveal">
-      <a href="https://github.com/rohit5khanna" target="_blank" rel="noopener" class="c-soc">
-        <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-        GitHub
-      </a>
-      <a href="https://www.linkedin.com/in/rohit-khanna" target="_blank" rel="noopener" class="c-soc">
-        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        LinkedIn
-      </a>
-      <a href="mailto:121rohit5khanna@gmail.com" class="c-soc">
-        <svg viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-        Email
-      </a>
-    </div>
-  </div>
-</section>
+</main>
 
 <footer>
   <span>© 2026 Rohit Khanna</span>
-  <span>Austin, TX</span>
-  <span>Built by hand · <a href="https://github.com/rohit5khanna" target="_blank" rel="noopener">Source</a></span>
+  <span>Last updated November 2026</span>
 </footer>
-
-<script>
-  // mobile nav
-  function toggleNav(){ document.getElementById('navLinks').classList.toggle('open'); }
-  document.querySelectorAll('#navLinks a').forEach(a => a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open')));
-
-  // nav border on scroll
-  const nav = document.getElementById('nav');
-  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40));
-
-  // reveal on scroll
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-</script>
 
 </body>
 </html>
