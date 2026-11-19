@@ -1,3 +1,4 @@
+html { color-scheme: light; }
 :root {
   --bg: #ffffff;
   --text: #1f2328;
@@ -5,9 +6,6 @@
   --line: #e6e8eb;
   --accent: #9a3f0a;
   --max: 760px;
-}
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #15171a; --text: #e6e6e6; --muted: #a0a6ad; --line: #2c3036; --accent: #f0915a; }
 }
 * { box-sizing: border-box; }
 body {
@@ -48,7 +46,6 @@ p { margin: 0 0 10px; }
   display: flex; align-items: center; justify-content: center; overflow: hidden;
   font: 600 34px "Source Serif 4", Georgia, serif;
 }
-@media (prefers-color-scheme: dark) { .photo { background: #1f2226; } }
 .photo img { width: 100%; height: 100%; object-fit: cover; }
 .role { color: var(--muted); margin: 0 0 10px; }
 .interests { margin: 0 0 12px; }
